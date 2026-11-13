@@ -438,8 +438,8 @@ def finish_game(state: State) -> Page:
     return Page(state, [
         Header("GAME OVER!"),
         "",
-        "Final Score: " + str(state.total_score),+","
-        "Innings Played: " + str(state.current_inning),+","
+        "Final Score: " + str(state.total_score),
+        "Innings Played: " + str(state.current_inning),
         "Total Swings: " + str(len(state.batting_player)),
         "",
         Button("Play Again", "restart")
