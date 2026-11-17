@@ -35,8 +35,7 @@ class State:
 # ROUTE 1: START PAGE
 @route
 def index(state: State) -> Page:
-    """ This function thats in state and returns a page, it is the first page that a person sees, it will be where they are 
-introduced to the game and give them a lttle information of the purpose of the game."""
+    """Introduces the game and displays the starting page."""
     return Page(state, [
         Header("BASEBALL 4 KIDZ"),
         Header("Baseball Simulator"),
@@ -52,9 +51,7 @@ introduced to the game and give them a lttle information of the purpose of the g
 # ROUTE 2: BATTER CUSTOMIZATION
 @route
 def batter_custom(state: State) -> Page:
-    """This function takes in state and return a page, the page that it returns is the customizing a batter,
-    it has the user imput batter strnegth as an integer, aswell as batter eye focus. they are then prompted with
-    contunie buttion that saves this batter, and moves to the next page"""
+    """Allows the user to customize batter strength and eye focus."""
     return Page(state, [
         Header("CREATE YOUR BATTER"),
         "Customize your player's abilities.",
@@ -73,8 +70,7 @@ def batter_custom(state: State) -> Page:
 @route
 def save_batter(state: State, batter_strength: int,
                 batter_eye_focus: int) -> Page:
-                    """This functions takes in state, and the batter's stats such as strength and eye focus 
-                    if it were to excede certain levels of numbers it is going to default them"""
+    """Saves the batter's stats and limits them to their valid ranges."""
 
     if batter_strength > 1000:
         batter_strength = 1000
@@ -97,8 +93,7 @@ def save_batter(state: State, batter_strength: int,
 # ROUTE 4: BAT CUSTOMIZATION
 @route
 def bat_custom(state: State) -> Page:
-    """This fuction takes in state and returns a page that has user pick there bat, 
-    they are given three options between wood, metal, and paper"""
+    """Allows the user to choose between wood, metal, and paper bats."""
     return Page(state, [
         Header("CHOOSE YOUR BAT"),
         "Each material changes how much energy",
@@ -122,8 +117,7 @@ def bat_custom(state: State) -> Page:
 # ROUTE 5: SAVE BAT INFORMATION
 @route
 def save_bat(state: State, bat_type: str) -> Page:
-    """This funcion takes in the state, and the bat type that the user choose 
-    and saved it towards the page in the future"""
+    """Saves the selected bat type and moves to pitcher customization."""
     state.bat_type = bat_type
     return pitcher_custom(state)
 
@@ -131,7 +125,7 @@ def save_bat(state: State, bat_type: str) -> Page:
 # ROUTE 6: PITCHER CUSTOMIZATION
 @route
 def pitcher_custom(state: State) -> Page:
-    """This function takes in state and returns a page that allows the players to input pitcher speed as a float """
+    """Allows the player to enter the pitcher's throwing speed."""
     return Page(state, [
         Header("CHOOSE YOUR PITCHER"),
         "How fast will the pitcher throw?",
@@ -152,8 +146,7 @@ def pitcher_custom(state: State) -> Page:
 # ROUTE 7: SAVE PITCHER INFORMATION
 @route
 def save_pitcher(state: State, pitcher_speed: float) -> Page:
-    """This fucntion takes in state and the pitcher speed selected and and saves them it also defualts them 
-    to choose a speed that is lower speed that is lower than the maximum of 105.8 """
+    """Saves the pitcher's speed if it is within the valid range."""
 
     if pitcher_speed >= 105.8:
         return Page(state, [
@@ -179,11 +172,8 @@ def save_pitcher(state: State, pitcher_speed: float) -> Page:
 # ROUTE 8: CREATE THE 10x10 GRID
 @route
 def actual_batting(state: State) -> Page:
-    """this function takes in a stae and returns a page, gives them instructions of how the hit the ball
-    that has creates a 10x10 grid, and randomized 3x3 grid that lies inside of hit for the user to then 
-    be able to selcted""" 
+    """Creates a 10x10 grid with a randomly positioned green 3x3 hitting zone."""
 
-    # Randomly position the green 3x3 hitting zone
     state.target_row = random.randint(0, 7)
     state.target_col = random.randint(0, 7)
 
@@ -194,7 +184,6 @@ def actual_batting(state: State) -> Page:
 
         for col in range(10):
 
-            # Check whether this square is inside the green zone
             if (state.target_row <= row < state.target_row + 3
                     and state.target_col <= col < state.target_col + 3):
 
@@ -203,7 +192,6 @@ def actual_batting(state: State) -> Page:
             else:
                 cell_color = "#DDDDDD"
 
-            # Create a button for each square
             cell = Button(
                 " ",
                 "final_score",
@@ -239,11 +227,8 @@ def actual_batting(state: State) -> Page:
 @route
 def final_score(state: State, selected_row: int,
                 selected_col: int) -> Page:
-                    """This function takes in a state and a selected row from the pervious function, that not only calucates 
-                    on where they hit a green square, but also calcuates what type of bat, strength and eye mutplier
-                    and even pitching speed to determine the calcuation of how far the ball will go, and if the distance
-                    was great enough to reach points, it lastly prompts them with more swings, and even final results page
-                    and if the batter swung and missed 3 times they are given the option to add an inning"""
+    """Calculates batting results using the selected square, bat type,
+    batter strength, eye focus, and pitch speed. Tracks score and misses."""
 
     # Describe the selected square
     grid_location = (
@@ -444,13 +429,9 @@ def final_score(state: State, selected_row: int,
 # ROUTE 10: NEXT INNING
 @route
 def one_more_inning(state: State) -> Page:
-    """This function takes in the state, and if the user were to deciede to add an other inning as prompted by the last function
-    it would return them to the batting page that resets there misses to 0 and restarts the process"""
+    """Increases the inning, resets misses, and returns to batting."""
 
-    # Increase the inning number
     state.current_inning += 1
-
-    # Reset the misses for the new inning
     state.misses = 0
 
     return actual_batting(state)
@@ -459,9 +440,7 @@ def one_more_inning(state: State) -> Page:
 # ROUTE 11: FINISH GAME
 @route
 def finish_game(state: State) -> Page:
-    """This function takes in state and returns a page of a finished game, it returns the suers final socre, 
-    the number of inning played and even there total amount of swings"""
-    
+    """Displays the final score, innings played, and total swings."""
 
     return Page(state, [
         Header("GAME OVER!"),
@@ -477,8 +456,7 @@ def finish_game(state: State) -> Page:
 # ROUTE 12: RESTART GAME
 @route
 def restart(state: State) -> Page:
-    """This is the last function of the code, it takes in state and returns a page, it returns the player to the starting scene
-    and has every costumization defaulted back to zero"""
+    """Resets all game information and returns the player to the start page."""
 
     state.batting_player = []
     state.total_score = 0
@@ -495,22 +473,13 @@ def restart(state: State) -> Page:
     return index(state)
 
 
-# START THE WEBSITE
-start_server(State(
-    [],
-    0,
-    50,
-    500,
-    "wood",
-    60.0,
-    1,
-    "",
-    0,
-    0,
-    0
-))
-from bakery import assert_equal
-"""From here lower is unit test for every function in the code all 31 test passed"""
+# ==========================================
+# UNIT TESTS
+# ==========================================
+
+"""Unit tests for all 12 routes and their main behaviors."""
+
+
 # TEST 1: index
 test_state = State([], 0, 50, 500, "wood", 60.0, 1, "", 0, 0, 0)
 test_page = index(test_state)
@@ -534,6 +503,12 @@ test_state = State([], 0, 50, 500, "wood", 60.0, 1, "", 0, 0, 0)
 save_batter(test_state, 1200, 150)
 assert_equal(test_state.bat_strength, 1000)
 assert_equal(test_state.batter_eye_focus, 100)
+
+# Test lower batter limits
+test_state = State([], 0, 50, 500, "wood", 60.0, 1, "", 0, 0, 0)
+save_batter(test_state, 0, 0)
+assert_equal(test_state.bat_strength, 1)
+assert_equal(test_state.batter_eye_focus, 1)
 
 
 # TEST 4: bat_custom
@@ -561,8 +536,15 @@ assert_equal(test_state.pitcher_strength, 75.0)
 
 # Test invalid pitcher speed
 test_state = State([], 0, 50, 500, "wood", 60.0, 1, "", 0, 0, 0)
-save_pitcher(test_state, 110.0)
+test_page = save_pitcher(test_state, 110.0)
 assert_equal(test_state.pitcher_strength, 60.0)
+assert_equal(type(test_page), Page)
+
+# Test lower invalid pitcher speed
+test_state = State([], 0, 50, 500, "wood", 60.0, 1, "", 0, 0, 0)
+test_page = save_pitcher(test_state, 0.0)
+assert_equal(test_state.pitcher_strength, 60.0)
+assert_equal(type(test_page), Page)
 
 
 # TEST 8: actual_batting
@@ -577,24 +559,32 @@ assert_equal(test_state.target_col <= 7, True)
 
 # TEST 9: final_score - HIT
 test_state = State([], 0, 50, 500, "wood", 60.0, 1, "", 0, 0, 0)
-final_score(test_state, 1, 1)
+test_state.target_row = 0
+test_state.target_col = 0
+test_page = final_score(test_state, 1, 1)
 assert_equal(len(test_state.batting_player), 1)
 assert_equal(test_state.total_score > 0, True)
 assert_equal(test_state.misses, 0)
+assert_equal(test_state.batting_player[0].result != "MISSED BALL!", True)
+
 
 # TEST 9: final_score - MISS
 test_state = State([], 0, 50, 500, "wood", 60.0, 1, "", 0, 0, 0)
-final_score(test_state, 9, 9)
+test_state.target_row = 0
+test_state.target_col = 0
+test_page = final_score(test_state, 9, 9)
 assert_equal(len(test_state.batting_player), 1)
 assert_equal(test_state.total_score, 0)
 assert_equal(test_state.misses, 1)
+assert_equal(test_state.batting_player[0].result, "MISSED BALL!")
 
 
 # TEST 10: one_more_inning
 test_state = State([], 0, 50, 500, "wood", 60.0, 1, "", 0, 0, 3)
-one_more_inning(test_state)
+test_page = one_more_inning(test_state)
 assert_equal(test_state.current_inning, 2)
 assert_equal(test_state.misses, 0)
+assert_equal(type(test_page), Page)
 
 
 # TEST 11: finish_game
@@ -610,9 +600,31 @@ test_state.batting_player.append(
     AtBatters("Random", "1, 1", 60.0, 3, "HIT", 100)
 )
 
-restart(test_state)
+test_page = restart(test_state)
 assert_equal(test_state.total_score, 0)
 assert_equal(test_state.misses, 0)
 assert_equal(test_state.current_inning, 1)
 assert_equal(len(test_state.batting_player), 0)
 assert_equal(test_state.bat_type, "wood")
+assert_equal(test_state.bat_strength, 500)
+assert_equal(test_state.batter_eye_focus, 50)
+assert_equal(type(test_page), Page)
+
+
+# ==========================================
+# START THE WEBSITE
+# ==========================================
+
+start_server(State(
+    [],
+    0,
+    50,
+    500,
+    "wood",
+    60.0,
+    1,
+    "",
+    0,
+    0,
+    0
+))
